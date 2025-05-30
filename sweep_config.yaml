@@ -1,0 +1,93 @@
+# Method for hyperparameter optimization
+method: bayes  # Bayesian optimization - uses Bayesian optimization to find optimal hyperparameters
+
+# Metric to optimize
+metric:
+  name: val_acc  # Validation accuracy is the metric we want to maximize
+  goal: maximize  # We want to maximize the validation accuracy
+
+# Early stopping configuration
+early_terminate:
+  type: hyperband  # Uses Hyperband algorithm for early stopping
+  min_iter: 5      # Minimum number of iterations before early stopping can occur
+  max_iter: 50     # Maximum number of iterations
+  s: 2             # Number of brackets in Hyperband algorithm
+  eta: 3           # Defines how many configurations to keep in each bracket
+
+# Hyperparameters to optimize
+parameters:
+  # Optimizer choice
+  optimizer:
+    values: [SGD, AdamW, Adam]  # Different optimizers to try
+  
+  # Learning rate range
+  learning_rate:
+    distribution: log_uniform_values  # Log-uniform distribution for learning rate
+    min: 1e-8                        # Minimum learning rate
+    max: 1e-2                        # Maximum learning rate
+  
+  # Weight decay (L2 regularization)
+  weight_decay:
+    distribution: log_uniform_values  # Log-uniform distribution for weight decay
+    min: 1e-8                        # Minimum weight decay
+    max: 1e-2                        # Maximum weight decay
+  
+  # Dropout rate
+  dropout:
+    distribution: uniform            # Uniform distribution for dropout
+    min: 0.0                         # Minimum dropout rate (no dropout)
+    max: 0.5                         # Maximum dropout rate (50% dropout)
+  
+  # Number of training epochs
+  epochs:
+    values: [20, 30, 40, 50]        # Different numbers of epochs to try
+  
+  # Batch size
+  batch_size:
+    values: [16, 32, 64]            # Different batch sizes to try
+  
+  # Momentum for SGD
+  momentum:
+    distribution: uniform            # Uniform distribution for momentum
+    min: 0.7                         # Minimum momentum
+    max: 0.99                        # Maximum momentum
+  
+  # Nesterov momentum
+  nesterov:
+    values: [true, false]           # Whether to use Nesterov momentum
+  
+  # Beta1 for Adam/AdamW
+  beta1:
+    distribution: uniform            # Uniform distribution for beta1
+    min: 0.8                         # Minimum beta1
+    max: 0.99                        # Maximum beta1
+  
+  # Beta2 for Adam/AdamW
+  beta2:
+    distribution: uniform            # Uniform distribution for beta2
+    min: 0.9                         # Minimum beta2
+    max: 0.999                       # Maximum beta2
+  
+  # Learning rate scheduler
+  scheduler:
+    values: [cosine, step, none]    # Different learning rate schedulers to try
+  
+  # Minimum learning rate for cosine scheduler
+  min_lr:
+    distribution: log_uniform_values  # Log-uniform distribution for minimum learning rate
+    min: 1e-8                         # Minimum learning rate
+    max: 1e-4                         # Maximum learning rate
+  
+  # Step size for step scheduler
+  lr_step_size:
+    values: [5, 10, 15]              # Different step sizes for learning rate decay
+  
+  # Gamma (decay factor) for step scheduler
+  lr_gamma:
+    distribution: uniform             # Uniform distribution for gamma
+    min: 0.1                          # Minimum gamma
+    max: 0.5                          # Maximum gamma
+  
+  # Data augmentation strategy
+  data_augmentation:
+    values: [basic, advanced]         # Different data augmentation strategies to try 

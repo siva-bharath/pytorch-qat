@@ -551,10 +551,24 @@ with open('sweep_config.yaml', 'r') as f:
 # Create sweep
 sweep_id = wandb.sweep(sweep_config, project="mobilenet_flowers102_hpo")
 
-# Run sweep
-wandb.agent(sweep_id, function=train, count=10)  # Run 10 trials
-
-# Final cleanup
-if torch.cuda.is_available():
-    torch.cuda.empty_cache()
-gc.collect()
+if __name__ == "__main__":
+    import argparse
+    
+    parser = argparse.ArgumentParser(description='Train MobileNetV2 with QAT')
+    parser.add_argument('--test-mode', action='store_true',
+                      help='Run in test mode with minimal data')
+    args = parser.parse_args()
+    
+    if args.test_mode:
+        # Modify parameters for testing
+        sweep_config['parameters']['epochs']['values'] = [1]
+        sweep_config['parameters']['batch_size']['values'] = [2]
+        wandb.agent(sweep_id, function=train, count=1)
+    else:
+        # Run normal training
+        wandb.agent(sweep_id, function=train, count=10)
+    
+    # Final cleanup
+    if torch.cuda.is_available():
+        torch.cuda.empty_cache()
+    gc.collect()
